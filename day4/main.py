@@ -8,16 +8,14 @@ INPUT_FILE="input"
 class BingoBoard:
     # size 25, each group of 5 is one row
     numbers: list[int]
-
-    # indexes of numbers in the list that have been called out
-    punched_numbers: list[int] = field(default_factory=list)
+    punched: list[bool] = field(default_factory=lambda: [False] * 25)
 
     score: int = 0
 
     def calculate_score(self, last_input: int) -> int:
         total = 0
         for i, n in enumerate(self.numbers):
-            if i not in self.punched_numbers:
+            if not self.punched[i]:
                 total += n
 
         self.score = total * last_input
@@ -27,31 +25,18 @@ class BingoBoard:
 
         for i, n in enumerate(self.numbers):
             if n == input: 
-                self.punched_numbers.append(i)
+                self.punched[i] = True
 
-        self.punched_numbers.sort()
-        
-        if len(self.punched_numbers) > 5:
-            # check column match
-            for i in range(0, 5):
-                columns = list(range(i, 25, 5))
-                column_match = all(n in self.punched_numbers for n in columns)
+        for i in range(0, 5):
+            offset = i * 5 
+            row_match = all(self.punched[offset:offset + 5])
+            column_match = all(self.punched[i:25:5])
 
-                if column_match:
-                    break
-            
-            # check row match
-            for i in range(0, 25, 5):
-                rows = list(range(i, i+5))
-                row_match = all(n in self.punched_numbers for n in rows)
+            if column_match or row_match:
+                self.calculate_score(input)
+                return True
 
-                if row_match:
-                    break
-        
-        if column_match or row_match:
-            self.calculate_score(input)
-
-        return column_match or row_match
+        return False
 
     def reset(self):
         self.punched_numbers = []
