@@ -1,7 +1,7 @@
 from pathlib import Path
 from collections import deque
 
-INPUT_FILENAME="example"
+INPUT_FILENAME="input"
 
 def part1(ages: list[int], days: int):
     for day in range(80):
@@ -13,21 +13,24 @@ def part1(ages: list[int], days: int):
     print(len(ages))
 
 def part2(ages: list[int], days: int):
+    CYCLE_TIMER = 7
+    CYCLE_OFFSET = 2
+
     total_fish_count = len(ages)
 
     # queue for count of fish to spawn, rotated every day, with index 0 = today
-    increment_count = deque([ages.count(day) for day in range(7)])
-    new_increment_count = deque([0, 0])
+    increment_count = deque([ages.count(day) for day in range(CYCLE_TIMER)])
+    new_increment_count = deque([0] * CYCLE_OFFSET)
 
     for day in range(days):
         new_fish_count = increment_count[0]
         total_fish_count += new_fish_count
 
-        increment_count[0] += new_increment_count[0]
-        new_increment_count[0] = new_fish_count
-
         increment_count.rotate(-1)
+        increment_count[CYCLE_TIMER - 1] += new_increment_count[0]
+
         new_increment_count.rotate(-1)
+        new_increment_count[CYCLE_OFFSET - 1] = new_fish_count
 
     print(total_fish_count)
 
