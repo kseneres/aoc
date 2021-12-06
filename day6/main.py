@@ -1,7 +1,7 @@
-import pathlib
+from pathlib import Path
 from collections import deque
 
-INPUT_FILE="input"
+INPUT_FILENAME="example"
 
 def part1(ages: list[int], days: int):
     for day in range(80):
@@ -9,8 +9,6 @@ def part1(ages: list[int], days: int):
 
         ages = [age - 1 if age > 0 else 6 for age in ages]
         ages = ages + [8] * count
-
-        # print(f"day {day}: {ages}")
 
     print(len(ages))
 
@@ -22,8 +20,6 @@ def part2(ages: list[int], days: int):
     new_increment_count = deque([0, 0])
 
     for day in range(days):
-        # print(f"day: {day}: {count}")
-
         new_fish_count = increment_count[0]
         total_fish_count += new_fish_count
 
@@ -37,7 +33,9 @@ def part2(ages: list[int], days: int):
 
 
 if __name__ == "__main__":
-    input_line = pathlib.Path(INPUT_FILE).read_text().strip()
+    input_file = Path(__file__).parent / INPUT_FILENAME
+    input_line = input_file.read_text().strip()
+    
     ages = [int(age) for age in input_line.split(",")]
 
     part1(ages, 80)
