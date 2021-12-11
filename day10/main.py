@@ -1,5 +1,4 @@
 from pathlib import Path
-from collections import deque
 
 INPUT_FILENAME="input"
 
@@ -11,14 +10,9 @@ TAGS = {
 } 
 
 def part1(input_lines: list[str]):
-    tag_values = {
-        ")": 3,
-        "]": 57,
-        "}": 1197,
-        ">": 25137
-    }
+    tag_values = { ")": 3, "]": 57, "}": 1197, ">": 25137 }
 
-    broken = []
+    broken_tags = []
     for line in input_lines:
         awaiting = []
         for c in line: 
@@ -27,9 +21,9 @@ def part1(input_lines: list[str]):
 
             if c in TAGS.values():
                 if c != awaiting.pop():
-                    broken.append(c)
+                    broken_tags.append(c)
 
-    points = sum([tag_values[c] for c in broken])
+    points = sum([tag_values[c] for c in broken_tags])
     print(points)
 
 
@@ -50,14 +44,8 @@ def part2(input_lines: list[str]):
             awaiting.reverse()
             closing_tags.append(awaiting)
 
-    tag_values = {
-        ")": 1,
-        "]": 2,
-        "}": 3,
-        ">": 4
-    }
-    
-    def get_points(tags: str) -> int: 
+    tag_values = { ")": 1, "]": 2, "}": 3, ">": 4 }
+    def get_points(tags: list[str]) -> int: 
         points = 0
         for tag in tags:
             points = points * 5 + tag_values[tag]
