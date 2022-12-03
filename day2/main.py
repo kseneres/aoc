@@ -1,44 +1,57 @@
+from enum import Enum
 import pathlib
-import sys
 
-INPUT_FILE="input"
+INPUT_FILE = "input"
+
 
 def parse(puzzle_input):
-    return [line.split() for line in puzzle_input.split("\n")]
+    """Parse input"""
+    return [int(line) for line in puzzle_input.split()]
 
-def part1(data):
-    position = 0
-    depth = 0
-    for direction, value in data:
-        value = int(value)
-        if direction == "forward":
-            position += value
-        elif direction == "down":
-            depth += value
-        elif direction == "up":
-            depth -= value
 
-    print(position * depth)
+def part1(rounds):
+    score = 0
 
-def part2(data):
-    aim = 0
-    position = 0
-    depth = 0
-    for direction, value in data:
-        value = int(value)
-        if direction == "forward":
-            position += value
-            depth += aim * value
-        elif direction == "down":
-            aim += value
-        elif direction == "up":
-            aim -= value
+    for round in rounds:
+        o, y = round.split()
 
-    print(position * depth)
+        other = ord(o) - ord("A")
+        you = ord(y) - ord("X")
+
+        tie = you == other
+        win = (you - 1) % 3 == other
+
+        if tie:
+            score += 3
+        elif win:
+            score += 6
+
+        score += ord(y) - ord("X") + 1
+
+    return score
+
+
+def part2(rounds):
+    scores = [1, 2, 3]
+
+    def get_score(round: str):
+        o, y = round.split()
+
+        index = ord(o) - ord("A") + 2
+        offset = ord(y) - ord("X")
+
+        score = scores[(index + offset) % 3]
+        score += (ord(y) - ord("X")) * 3
+
+        return score
+
+    score = sum([get_score(round) for round in rounds])
+    return score
+
 
 if __name__ == "__main__":
-    puzzle_input = pathlib.Path(INPUT_FILE).read_text().strip()
-    data = parse(puzzle_input)
+    puzzle_input = pathlib.Path(INPUT_FILE).read_text()
+    rounds = [round for round in puzzle_input.split("\n")]
 
-    part1(data)
-    part2(data)
+    print(part1(rounds))
+    print(part2(rounds))
